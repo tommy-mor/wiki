@@ -108,6 +108,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 ** templating tricks
 you can reference inputs later in the html file is you do #inputVariableName on the input
    
+#+BEGIN_SRC html
 <div>
   <label>Hero name:
     <input #heroName />
@@ -117,6 +118,7 @@ you can reference inputs later in the html file is you do #inputVariableName on 
     add
   </button>
 </div>
+#+END_SRC
 
 
 (click)="functionInTheComponent(); property='set directly from html'"
@@ -131,18 +133,24 @@ other directives
 
 *** *ngIf
 
+#+BEGIN_SRC html
 <div *ngIf="currentCustomer">
   Selected {{currentCustomer.Name}}
 </div>
+#+END_SRC
 *** *ngFor
+#+BEGIN_SRC html
 <ul>
   <li *ngFor="let customer of customers">
     {{ customer.name }}
   </li>
 </ul>
+#+END_SRC
 *** *ngSwitch
+#+BEGIN_SRC html
 <div [ngSwitch]="orderStatus">
   <template [ngSwitchCase]="purchased"></template>
   <template [ngSwitchCase]="shipped"></template>
   <template [ngSwitchDefault]></template>
 </div>
+#+END_SRC
