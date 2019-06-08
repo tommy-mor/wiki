@@ -4,13 +4,16 @@
 ;; You may delete these explanatory comments.
 (package-initialize)
 
+(defun revert-buffer-no-confirm ()
+  "Revert buffer without confirmation."
+  (interactive) (revert-buffer t t))
+
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
 (eval-when-compile ;; Following line is not needed if use-package.el is in ~/.emacs.d (require 'use-palllCKAGE)
   (require 'use-package)) 
 (setq use-package-always-ensure t)
-
 (use-package evil :config (evil-mode 1))
 (use-package evil-leader :config
   (global-evil-leader-mode 1)
@@ -24,9 +27,11 @@
     "v" 'er/expand-region
     "c" 'comment-region
     "r" 'revert-buffer-no-confirm
-	"g" 'helm-grep-do-git-grep
-    ))
-(use-package smartparens :config (smartparens-global-mode 1))
+	"q" 'recompile
+  "g" 'helm-grep-do-git-grep 
+  "p" 'font-lock-fontify-buffer))
+    
+(use-package smartparens :config (smartparens-global-mode 1) (evil-smartparens-mode 1))
 (use-package helm :config 
   (define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-z") 'helm-select-action)
@@ -35,11 +40,14 @@
 (use-package company)
 (use-package evil-colemak-basics :config (global-evil-colemak-basics-mode 1))
 (use-package python-mode)
+(use-package exec-path-from-shell :config (exec-path-from-shell-initialize))
+(use-package typescript-mode)
 (use-package csharp-mode)
 (use-package typescript-mode)
+(use-package flycheck)
 (use-package ng2-mode)
-(use-package clojure-mode)
 (use-package parinfer
+  :ensure t
   :bind
   (("C-," . parinfer-toggle-mode))
   :init
@@ -80,6 +88,36 @@
 (setq show-paren-delay 0)
 (show-paren-mode 1)
 
+
+
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M-x package-install [ret] company`
+  (company-mode +1))
+
+;; aligns annotation to the right hand side
+(setq company-tooltip-align-annotations t)
+
+;; formats the buffer before saving
+(add-hook 'before-save-hook 'tide-format-before-save)
+
+(add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+(add-hook 'web-mode-hook
+          (lambda ()
+            (when (string-equal "tsx" (file-name-extension buffer-file-name))
+              (setup-tide-mode))))
+;; enable typescript-tslint checker
+(flycheck-add-mode 'typescript-tslint 'web-mode)
 ;; -------------------------- HOOKS
 (add-hook 'python-mode-hook
 		  (lambda ()
@@ -93,10 +131,20 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (use-package evil-visual-mark-mode))))
+ '(custom-safe-themes
+   (quote
+	("ba7917b02812fee8da4827fdf7867d3f6f282694f679b5d73f9965f45590843a" default)))
+ '(package-selected-packages
+   (quote
+	(evil-smartparens tide processing-mode use-package evil-visual-mark-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(setq processing-location "/home/tommy/Documents/processing-3.4/processing-java")
+(setq processing-application-dir "/home/tommy/Documents/processing-3.4/")
+(setq processing-sketchbook-dir "/home/tommy/sketchbook")
+(load-file ".emacs.d/evil-smartparens.el")
