@@ -41,7 +41,9 @@
 (use-package expand-region)
 (use-package company)
 (use-package evil-colemak-basics :config (global-evil-colemak-basics-mode 1))
-(use-package elpy :ensure t :init (elpy-enable))
+(use-package elpy :ensure t :init (elpy-enable) :config (setq python-shell-interpreter "python3"
+															  elpy-rpc-python-command "python3"
+															  python-shell-interpreter-args "-i"))
 (use-package exec-path-from-shell :config (exec-path-from-shell-initialize))
 (use-package typescript-mode)
 (use-package csharp-mode)
@@ -79,7 +81,6 @@
 (setq ring-bell-function 'ignore)
 (blink-cursor-mode 0)
 (setq-default tab-width 4)
-(setq python-indent 4)
 (setq indent-tabs-mode 1)
 (windmove-default-keybindings)
 
@@ -122,7 +123,7 @@
 ;; enable typescript-tslint checker
 (flycheck-add-mode 'typescript-tslint 'web-mode)
 ;; -------------------------- HOOKS
-(add-hook 'python-mode-hook
+(add-hook 'elpy-mode-hook
 		  (lambda ()
 			(setq-default indent-tabs-mode t)
 			(setq-default tab-width 4)
