@@ -87,10 +87,34 @@ fi
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
+
+# CUSTOM
 # some more ls aliases
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
+
+alias qwerty='setxkbmap us'
+alias colemak='setxkbmap us -variant colemak'
+alias 1='xbacklight -set 1'
+
+o() {
+ nohup xdg-open $1 &>/dev/null &
+}
+
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+export PATH=$PATH:/home/tommy/.local/bin
+export PATH=$PATH:/home/tommy/.cabal/bin
+export PATH=$PATH:/root/.local/bin
+
+export JAVA_HOME=/home/tommy/Downloads/android-studio/jre/
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -115,6 +139,4 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-alias colemak='setxkbmap us -variant colemak'
-alias qwerty='setxkbmap us'
-alias sync='lsyncd --nodaemon --rsyncssh /home/tommy/programming/friend/ root@167.99.163.250 /root/todo'
+source $HOME/.cargo/env
