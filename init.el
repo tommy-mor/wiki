@@ -1,4 +1,4 @@
-;; Added by Package.el.  This must come before configurations of
+; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
@@ -17,8 +17,10 @@
 (eval-when-compile ;; Following line is not needed if use-package.el is in ~/.emacs.d (require 'use-palllCKAGE)
   (require 'use-package)) 
 (setq use-package-always-ensure t)
-(use-package undo-tree)
+
+
 (use-package evil :config (evil-mode 1))
+;(use-package evil-snipe :config (evil-snipe-mode 1) (evil-snipe-override-mode 1))
 (use-package evil-leader :config
   (global-evil-leader-mode 1)
   (evil-leader/set-leader ",")
@@ -32,23 +34,44 @@
 	"c" 'comment-region
 	"r" 'revert-buffer-no-confirm
 	"q" 'recompile ;; kill-this-buffer
+	"t" (lambda () (interactive) (load-file "~/programming/treenav/treenav.el")) ;; kill-this-buffer
 	"d" 'kill-this-buffer
 	"g" 'helm-grep-do-git-grep 
 	"s" 'string-edit-at-point
+	"o" 'helm-occur
+	"l" 'helm-locate
 	"p" 'font-lock-fontify-buffer))
+	;"p" 'helm-projectile-find-file))
 (use-package evil-surround :ensure t :config (global-evil-surround-mode 1))
+
+(use-package undo-tree :config (global-undo-tree-mode) (evil-set-undo-system 'undo-tree))
 (use-package evil-smartparens)
 (use-package smartparens :config (smartparens-global-mode 1) (evil-smartparens-mode 1))
 (use-package helm :config 
   (define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-z") 'helm-select-action)
-  (helm-autoresize-mode 0))
+  (helm-autoresize-mode 0)
+  (setq helm-buffers-fuzzy-matching t)
+  (setq helm-locate-fuzzy-match t)
+  (setq helm-recentf-fuzzy-match t))
+(use-package helm-projectile)
+(use-package tree-sitter)
+(use-package tree-sitter-langs)
+(global-tree-sitter-mode)
+(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+
+
+(load-file "~/.emacs.d/helm-fzf.el")
 (use-package expand-region)
 (use-package company)
 (use-package evil-colemak-basics :config (global-evil-colemak-basics-mode 1))
 (use-package elpy :ensure t :init (elpy-enable) :config (setq python-shell-interpreter "python3"
 															  elpy-rpc-python-command "python3"
 															  python-shell-interpreter-args "-i"))
+(add-hook 'inferior-python-mode-hook
+          (lambda ()
+            (setq comint-move-point-for-output t)))
+
 (use-package exec-path-from-shell :config (exec-path-from-shell-initialize))
 (use-package typescript-mode)
 (use-package csharp-mode)
@@ -58,6 +81,9 @@
 (use-package ng2-mode)
 (use-package dokuwiki)
 (use-package dokuwiki-mode :config (add-to-list 'auto-mode-alist '("\\.dwiki\\'" . dokuwiki-mode)))
+(use-package origami)
+(use-package leuven-theme)
+(origami-mode 1)
 ;;(use-package parinfer
   ;;:ensure t
   ;;:bind
@@ -91,8 +117,9 @@
 (setq indent-tabs-mode 1)
 (windmove-default-keybindings)
 
-(load-theme 'manoj-dark t)
-;;(load-theme 'misterioso t)
+;;(load-theme 'manoj-dark t)
+;(load-theme 'misterioso t)
+(load-theme 'leuven t)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (global-hl-line-mode 0)
@@ -102,17 +129,17 @@
 
 
 
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode +1)
-  (tide-hl-identifier-mode +1)
-  ;; company is an optional dependency. You have to
-  ;; install it separately via package-install
-  ;; `M-x package-install [ret] company`
-  (company-mode +1))
+;;(defun setup-tide-mode ()
+;;  (interactive)
+;;  (tide-setup)
+;;  (flycheck-mode +1)
+;;  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+;;  (eldoc-mode +1)
+;;  (tide-hl-identifier-mode +1)
+;;  ;; company is an optional dependency. You have to
+;;  ;; install it separately via package-install
+;;  ;; `M-x package-install [ret] company`
+;;  (company-mode +1))
 
 ;; aligns annotation to the right hand side
 (setq company-tooltip-align-annotations t)
@@ -120,7 +147,7 @@
 ;; formats the buffer before saving
 ;;(add-hook 'before-save-hook 'tide-format-before-save)
 
-(add-hook 'typescript-mode-hook #'setup-tide-mode)
+; (add-hook 'typescript-mode-hook #'setup-tide-mode)
 ;;(use-package web-mode)
 ;;(require 'web-mode)
 ;;(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
@@ -129,14 +156,12 @@
 ;;			(when (string-equal "tsx" (file-name-extension buffer-file-name))
 ;;			  (setup-tide-mode))))
 ;; enable typescript-tslint checker
-(flycheck-add-mode 'typescript-tslint 'web-mode)
+; (flycheck-add-mode 'typescript-tslint 'web-mode)
 ;; -------------------------- HOOKS
 (add-hook 'elpy-mode-hook
 		  (lambda ()
 			(setq-default indent-tabs-mode t)
-			(setq-default tab-width 4)
-			(setq-default py-indent-tabs-mode t)
-			))
+			(setq-default tab-width 4) (setq-default py-indent-tabs-mode t)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -144,24 +169,17 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   (quote
-	("ba7917b02812fee8da4827fdf7867d3f6f282694f679b5d73f9965f45590843a" default)))
+   '("ba7917b02812fee8da4827fdf7867d3f6f282694f679b5d73f9965f45590843a" default))
  '(haskell-interactive-popup-errors nil)
- '(haskell-mode-hook (quote (interactive-haskell-mode)) t)
+ '(haskell-mode-hook '(interactive-haskell-mode) t)
  '(package-selected-packages
-   (quote
-	(merlin reason-mode elm-mode tern symex ivy evil-lispy ivy-explorer ivy-dired-history kivy-mode ivy-clipmenu hy-mode moonscript evil-numbers latex-preview-pane auctex rainbow-delimiters markdown-mode evil-mc multiple-cursors eink-theme monokai-theme monokai-pro-theme string-edit vimish-fold hideshow-org gnu-elpa-keyring-update itail julia-repl julia-mode hindent hindent-mode haskell-mode cider clojure-mode dokuwiki-mode dokuwiki elpy racer evil-smartparens tide processing-mode use-package evil-visual-mark-mode))))
+   '(tree-sitter-langs tree-sitter helm-projectile leuven-theme nix-mode origami tuareg merlin reason-mode elm-mode tern ivy evil-lispy ivy-explorer ivy-dired-history kivy-mode ivy-clipmenu hy-mode moonscript evil-numbers latex-preview-pane auctex rainbow-delimiters markdown-mode evil-mc multiple-cursors eink-theme monokai-theme monokai-pro-theme string-edit vimish-fold hideshow-org gnu-elpa-keyring-update itail julia-repl julia-mode hindent hindent-mode haskell-mode cider clojure-mode dokuwiki-mode dokuwiki elpy racer evil-smartparens tide processing-mode use-package evil-visual-mark-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-;(load "/home/tommy/.opam/default/share/emacs/site-lisp/tuareg-site-file")
-
-;;(setq processing-location "/home/tommy/Documents/processing-3.4/processing-java")
-;;(setq processing-application-dir "/home/tommy/Documents/processing-3.4/")
-;;(setq processing-sketchbook-dir "/home/tommy/sketchbook")
 
 (global-set-key (kbd "M-S") 'sp-splice-sexp)
 (global-set-key (kbd "M-s") 'sp-split-sexp)
@@ -172,10 +190,9 @@
 (global-set-key (kbd "C-0") 'sp-forward-slurp-sexp)
 (global-set-key (kbd "s-k") 'kill-buffer)
 
-(setq dokuwiki-xml-rpc-url "http://morriss.tk/lib/exe/xmlrpc.php")
-(setq dokuwiki-login-user-name "tommy")
 ;;(eval-after-load "haskell-mode"
 ;;  '(define-key haskell-mode-map (kbd "C-c C-c") 'recompile))
+
 (use-package hindent)
 (add-hook 'haskell-mode-hook #'hindent-mode)
 (add-hook 'haskell-mode-hook #'interactive-haskell-mode)
@@ -200,12 +217,53 @@
      (lispy-define-key lispy-mode-map "E" 'lispy-eval)
      (lispy-define-key lispy-mode-map "f" 'lispy-flow)))
 
-(evil-mode)
-(use-package symex :ensure t)
-(global-set-key (kbd "s-;") 'symex-mode-interface)  ; or whatever keybinding you like
+;(evil-mode)
+;(use-package symex :ensure t)
+;(global-set-key (kbd "s-;") 'symex-mode-interface)  ; or whatever keybinding you like
 
 ;;(helm-posframe-enable)
 (add-hook 'reason-mode-hook (lambda ()
           (add-hook 'before-save-hook #'refmt-before-save)))
+
 (fset 'raise
    "%%x``x")
+
+(defun window-half-height ()
+  (max 1 (/ (1- (window-height (selected-window))) 2))) 
+
+(defun scroll-up-half ()
+  (interactive)
+  (scroll-up (window-half-height))) 
+
+(defun scroll-down-half ()         
+  (interactive)                    
+  (scroll-down (window-half-height)))
+
+
+(with-eval-after-load 'evil-maps
+  (define-key evil-normal-state-map (kbd "C-n") 'scroll-up-half)
+  (define-key evil-normal-state-map (kbd "C-e") 'scroll-down-half))
+
+; tree sitter bs
+(defun tree-sitter-mark-bigger-node ()
+  (interactive)
+  (let* ((p (point))
+         (m (or (mark) p))
+         (beg (min p m))
+         (end (max p m))
+         (root (ts-root-node tree-sitter-tree))
+         (node (ts-get-descendant-for-position-range root beg end))
+         (node-beg (ts-node-start-position node))
+         (node-end (ts-node-end-position node)))
+    ;; Node fits the region exactly. Try its parent node instead.
+    (when (and (= beg node-beg) (= end node-end))
+      (when-let ((node (ts-get-parent node)))
+        (setq node-beg (ts-node-start-position node)
+              node-end (ts-node-end-position node))))
+    (set-mark node-end)
+    (goto-char node-beg)))
+
+(setq er/try-expand-list (append er/try-expand-list
+                                 '(tree-sitter-mark-bigger-node)))
+
+; (load-file "~/.emacs.d/treenav.el")
