@@ -37,7 +37,9 @@
 	"t" (lambda () (interactive) (load-file "~/programming/treenav/treenav.el")) ;; kill-this-buffer
 	"d" 'kill-this-buffer
 	"g" 'helm-grep-do-git-grep 
-	"s" 'string-edit-at-point
+	"e" 'string-edit-at-point
+	"s" 'aya-create
+	"S" 'aya-expand
 	"o" 'helm-occur
 	"l" 'helm-locate
 	"p" 'font-lock-fontify-buffer))
@@ -83,6 +85,8 @@
 (use-package dokuwiki-mode :config (add-to-list 'auto-mode-alist '("\\.dwiki\\'" . dokuwiki-mode)))
 (use-package origami)
 (use-package leuven-theme)
+(use-package auto-yasnippet)
+
 (origami-mode 1)
 ;;(use-package parinfer
   ;;:ensure t
@@ -173,7 +177,7 @@
  '(haskell-interactive-popup-errors nil)
  '(haskell-mode-hook '(interactive-haskell-mode) t)
  '(package-selected-packages
-   '(tree-sitter-langs tree-sitter helm-projectile leuven-theme nix-mode origami tuareg merlin reason-mode elm-mode tern ivy evil-lispy ivy-explorer ivy-dired-history kivy-mode ivy-clipmenu hy-mode moonscript evil-numbers latex-preview-pane auctex rainbow-delimiters markdown-mode evil-mc multiple-cursors eink-theme monokai-theme monokai-pro-theme string-edit vimish-fold hideshow-org gnu-elpa-keyring-update itail julia-repl julia-mode hindent hindent-mode haskell-mode cider clojure-mode dokuwiki-mode dokuwiki elpy racer evil-smartparens tide processing-mode use-package evil-visual-mark-mode)))
+   '(auto-yasnippet tree-sitter-langs tree-sitter helm-projectile leuven-theme nix-mode origami tuareg merlin reason-mode elm-mode tern ivy evil-lispy ivy-explorer ivy-dired-history kivy-mode ivy-clipmenu hy-mode moonscript evil-numbers latex-preview-pane auctex rainbow-delimiters markdown-mode evil-mc multiple-cursors eink-theme monokai-theme monokai-pro-theme string-edit vimish-fold hideshow-org gnu-elpa-keyring-update itail julia-repl julia-mode hindent hindent-mode haskell-mode cider clojure-mode dokuwiki-mode dokuwiki elpy racer evil-smartparens tide processing-mode use-package evil-visual-mark-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
