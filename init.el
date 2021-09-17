@@ -18,9 +18,20 @@
   (require 'use-package)) 
 (setq use-package-always-ensure t)
 
+(use-package avy)
+
+
+
+
+
+
+
+;(require 'gauche-mode)
 
 (use-package evil :config (evil-mode 1))
+(define-key evil-normal-state-map (kbd "<esc>") ())
 ;(use-package evil-snipe :config (evil-snipe-mode 1) (evil-snipe-override-mode 1))
+
 (use-package evil-leader :config
   (global-evil-leader-mode 1)
   (evil-leader/set-leader ",")
@@ -29,12 +40,13 @@
 	"b" 'helm-mini
 	"k" 'helm-show-kill-ring
 	"a" 'company-mode
+	;; TODO have evil leader with hold comma, then press tab stuff
 	"TAB" 'mode-line-other-buffer
 	"v" 'er/expand-region
 	"c" 'comment-region
 	"r" 'revert-buffer-no-confirm
 	"q" 'recompile ;; kill-this-buffer
-	"t" (lambda () (interactive) (load-file "~/programming/treenav/treenav.el")) ;; kill-this-buffer
+	;;"R" () ;; kill-this-buffer
 	"d" 'kill-this-buffer
 	"g" 'helm-grep-do-git-grep 
 	"e" 'string-edit-at-point
@@ -42,8 +54,11 @@
 	"S" 'aya-expand
 	"o" 'helm-occur
 	"l" 'helm-locate
+	"t" 'avy-goto-word-1
 	"p" 'font-lock-fontify-buffer))
-	;"p" 'helm-projectile-find-file))
+
+(setq avy-keys '(?a ?r ?s ?t ?h ?n ?e ?i))
+										;"p" 'helm-projectile-find-file))
 (use-package evil-surround :ensure t :config (global-evil-surround-mode 1))
 
 (use-package undo-tree :config (global-undo-tree-mode) (evil-set-undo-system 'undo-tree))
@@ -63,7 +78,6 @@
 (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
 
-(load-file "~/.emacs.d/helm-fzf.el")
 (use-package expand-region)
 (use-package company)
 (use-package evil-colemak-basics :config (global-evil-colemak-basics-mode 1))
@@ -86,6 +100,8 @@
 (use-package origami)
 (use-package leuven-theme)
 (use-package auto-yasnippet)
+(use-package wakatime-mode)
+(global-wakatime-mode 1)
 
 (origami-mode 1)
 ;;(use-package parinfer
@@ -121,9 +137,10 @@
 (setq indent-tabs-mode 1)
 (windmove-default-keybindings)
 
-;;(load-theme 'manoj-dark t)
-;(load-theme 'misterioso t)
-(load-theme 'leuven t)
+;(load-theme 'manoj-dark t)
+										;(load-theme 'misterioso t)
+;; (load-theme 'leuven t)
+(load-theme 'leuven-dark t)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (global-hl-line-mode 0)
@@ -177,7 +194,11 @@
  '(haskell-interactive-popup-errors nil)
  '(haskell-mode-hook '(interactive-haskell-mode) t)
  '(package-selected-packages
-   '(auto-yasnippet tree-sitter-langs tree-sitter helm-projectile leuven-theme nix-mode origami tuareg merlin reason-mode elm-mode tern ivy evil-lispy ivy-explorer ivy-dired-history kivy-mode ivy-clipmenu hy-mode moonscript evil-numbers latex-preview-pane auctex rainbow-delimiters markdown-mode evil-mc multiple-cursors eink-theme monokai-theme monokai-pro-theme string-edit vimish-fold hideshow-org gnu-elpa-keyring-update itail julia-repl julia-mode hindent hindent-mode haskell-mode cider clojure-mode dokuwiki-mode dokuwiki elpy racer evil-smartparens tide processing-mode use-package evil-visual-mark-mode)))
+   '(lua-mode fennel-mode session symex buffer-stack auto-yasnippet tree-sitter-langs tree-sitter helm-projectile leuven-theme nix-mode origami tuareg merlin reason-mode elm-mode tern ivy evil-lispy ivy-explorer ivy-dired-history kivy-mode ivy-clipmenu hy-mode moonscript evil-numbers latex-preview-pane auctex rainbow-delimiters markdown-mode evil-mc multiple-cursors eink-theme monokai-theme monokai-pro-theme string-edit vimish-fold hideshow-org gnu-elpa-keyring-update itail julia-repl julia-mode hindent hindent-mode haskell-mode cider clojure-mode dokuwiki-mode dokuwiki elpy racer evil-smartparens tide processing-mode use-package evil-visual-mark-mode))
+ '(session-use-package t nil (session))
+ '(wakatime-api-key "b93ccd46-94c9-4b96-a195-4e0205b9cc36")
+ '(wakatime-cli-path "/home/tommy/.local/bin/wakatime")
+ '(wakatime-python-bin nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -197,9 +218,9 @@
 ;;(eval-after-load "haskell-mode"
 ;;  '(define-key haskell-mode-map (kbd "C-c C-c") 'recompile))
 
-(use-package hindent)
-(add-hook 'haskell-mode-hook #'hindent-mode)
-(add-hook 'haskell-mode-hook #'interactive-haskell-mode)
+;(use-package hindent)
+;(add-hook 'haskell-mode-hook #'hindent-mode)
+;(add-hook 'haskell-mode-hook #'interactive-haskell-mode)
 
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 ;;(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
@@ -208,26 +229,9 @@
 (global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
 (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt)
 
-(eval-after-load "lispy"
-  `(progn
-     ;; replace a global binding with own function
-     ;;(define-key lispy-mode-map (kbd "C-e") 'my-custom-eol)
-     ;; replace a global binding with major-mode's default
-     ;;(define-key lispy-mode-map (kbd "C-j") nil)
-     ;; replace a local binding
-     (lispy-define-key lispy-mode-map "n" 'lispy-down)
-     (lispy-define-key lispy-mode-map "e" 'lispy-up)
-     (lispy-define-key lispy-mode-map "i" 'lispy-right)
-     (lispy-define-key lispy-mode-map "E" 'lispy-eval)
-     (lispy-define-key lispy-mode-map "f" 'lispy-flow)))
-
-;(evil-mode)
-;(use-package symex :ensure t)
-;(global-set-key (kbd "s-;") 'symex-mode-interface)  ; or whatever keybinding you like
-
 ;;(helm-posframe-enable)
 (add-hook 'reason-mode-hook (lambda ()
-          (add-hook 'before-save-hook #'refmt-before-save)))
+							  (add-hook 'before-save-hook #'refmt-before-save)))
 
 (fset 'raise
    "%%x``x")
@@ -246,28 +250,71 @@
 
 (with-eval-after-load 'evil-maps
   (define-key evil-normal-state-map (kbd "C-n") 'scroll-up-half)
-  (define-key evil-normal-state-map (kbd "C-e") 'scroll-down-half))
+  (define-key evil-normal-state-map (kbd "C-e") 'scroll-down-half)
+  ; overwrites top of window keybind
+  ; have this be 'window-next' and 'window prev'
+  (define-key evil-normal-state-map (kbd "H") 'windmove-left) 
+  (define-key evil-normal-state-map (kbd "I") 'windmove-right))
+
+(evil-define-key 'insert symex-mode-map
+  (kbd "<escape>") 'symex-mode-interface)
+
+(evil-define-key 'normal symex-mode-map
+  (kbd "<escape>") 'symex-mode-interface)
 
 ; tree sitter bs
 (defun tree-sitter-mark-bigger-node ()
   (interactive)
   (let* ((p (point))
-         (m (or (mark) p))
-         (beg (min p m))
-         (end (max p m))
-         (root (ts-root-node tree-sitter-tree))
-         (node (ts-get-descendant-for-position-range root beg end))
-         (node-beg (ts-node-start-position node))
-         (node-end (ts-node-end-position node)))
-    ;; Node fits the region exactly. Try its parent node instead.
-    (when (and (= beg node-beg) (= end node-end))
-      (when-let ((node (ts-get-parent node)))
-        (setq node-beg (ts-node-start-position node)
-              node-end (ts-node-end-position node))))
-    (set-mark node-end)
-    (goto-char node-beg)))
+		 (m (or (mark) p))
+		 (beg (min p m))
+		 (end (max p m))
+		 (root (ts-root-node tree-sitter-tree))
+		 (node (ts-get-descendant-for-position-range root beg end))
+		 (node-beg (ts-node-start-position node))
+		 (node-end (ts-node-end-position node)))
+	;; Node fits the region exactly. Try its parent node instead.
+	(when (and (= beg node-beg) (= end node-end))
+	  (when-let ((node (ts-get-parent node)))
+		(setq node-beg (ts-node-start-position node)
+			  node-end (ts-node-end-position node))))
+	(set-mark node-end)
+	(goto-char node-beg)))
 
 (setq er/try-expand-list (append er/try-expand-list
                                  '(tree-sitter-mark-bigger-node)))
 
 ; (load-file "~/.emacs.d/treenav.el")
+(setq auto-save-file-name-transforms
+	  `((".*" "~/.emacs-saves/" t)))
+
+(setq undo-tree-visualizer-diff nil)
+										; TODO make H and I switch left/right buffers
+(save-place-mode t)
+(use-package symex
+  :config
+  (symex-initialize)
+  (global-set-key (kbd "s-;") 'symex-mode-interface)
+  :custom
+  (symex-modal-backend 'evil))  
+
+(use-package cider)
+(use-package session)
+(add-hook 'after-init-hook 'session-initialize)
+
+(setq auto-save-file-name-transforms
+	  `((".*" "~/.emacs-saves/" t)))
+
+(load "$HOME/.lisp.el")
+(put 'match 'lisp-indent-function 'defun)
+(setq line-number-mode t)
+(setq column-number-mode t)
+(setq visible-bell t)
+(setq fill-column 70)
+(setq default-major-mode 'text-mode)
+(setq text-mode-hook
+      '(lambda () (auto-fill-mode 1)))
+(add-hook 'text-mode 'turn-on-auto-fill)
+(show-paren-mode 1)
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
