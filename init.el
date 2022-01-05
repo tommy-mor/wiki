@@ -1,7 +1,3 @@
-; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
 (package-initialize)
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (column-number-mode 1)
@@ -22,7 +18,11 @@
 
 
 
-
+(require 'ansi-color)
+(defun my/ansi-colorize-buffer ()
+  (let ((buffer-read-only nil))
+    (ansi-color-apply-on-region (point-min) (point-max))))
+(add-hook 'compilation-filter-hook 'my/ansi-colorize-buffer)
 
 
 
@@ -63,7 +63,11 @@
 
 (use-package undo-tree :config (global-undo-tree-mode) (evil-set-undo-system 'undo-tree))
 (use-package evil-smartparens)
-(use-package smartparens :config (smartparens-global-mode 1) (evil-smartparens-mode 1))
+(use-package smartparens :config
+  (smartparens-global-mode 1)
+  (evil-smartparens-mode 1)
+  (sp-local-pair 'Shell "'" nil :actions nil))
+
 (use-package helm :config 
   (define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-z") 'helm-select-action)
@@ -71,9 +75,11 @@
   (setq helm-buffers-fuzzy-matching t)
   (setq helm-locate-fuzzy-match t)
   (setq helm-recentf-fuzzy-match t))
+
 (use-package helm-projectile)
 (use-package tree-sitter)
 (use-package tree-sitter-langs)
+
 (global-tree-sitter-mode)
 (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
@@ -89,11 +95,7 @@
             (setq comint-move-point-for-output t)))
 
 (use-package exec-path-from-shell :config (exec-path-from-shell-initialize))
-(use-package typescript-mode)
-(use-package csharp-mode)
-(use-package typescript-mode)
 (use-package flycheck)
-(use-package racket-mode)
 (use-package ng2-mode)
 (use-package dokuwiki)
 (use-package dokuwiki-mode :config (add-to-list 'auto-mode-alist '("\\.dwiki\\'" . dokuwiki-mode)))
@@ -190,11 +192,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("ba7917b02812fee8da4827fdf7867d3f6f282694f679b5d73f9965f45590843a" default))
+   '("039c01abb72985a21f4423dd480ddb998c57d665687786abd4e16c71128ef6ad" "ba7917b02812fee8da4827fdf7867d3f6f282694f679b5d73f9965f45590843a" default))
  '(haskell-interactive-popup-errors nil)
  '(haskell-mode-hook '(interactive-haskell-mode) t)
  '(package-selected-packages
-   '(lua-mode fennel-mode session symex buffer-stack auto-yasnippet tree-sitter-langs tree-sitter helm-projectile leuven-theme nix-mode origami tuareg merlin reason-mode elm-mode tern ivy evil-lispy ivy-explorer ivy-dired-history kivy-mode ivy-clipmenu hy-mode moonscript evil-numbers latex-preview-pane auctex rainbow-delimiters markdown-mode evil-mc multiple-cursors eink-theme monokai-theme monokai-pro-theme string-edit vimish-fold hideshow-org gnu-elpa-keyring-update itail julia-repl julia-mode hindent hindent-mode haskell-mode cider clojure-mode dokuwiki-mode dokuwiki elpy racer evil-smartparens tide processing-mode use-package evil-visual-mark-mode))
+   '(lua-mode fennel-mode session buffer-stack auto-yasnippet tree-sitter-langs tree-sitter helm-projectile leuven-theme nix-mode origami tuareg merlin reason-mode elm-mode tern ivy evil-lispy ivy-explorer ivy-dired-history kivy-mode ivy-clipmenu hy-mode moonscript evil-numbers latex-preview-pane auctex rainbow-delimiters markdown-mode evil-mc multiple-cursors eink-theme monokai-theme monokai-pro-theme string-edit vimish-fold hideshow-org gnu-elpa-keyring-update itail julia-repl julia-mode hindent hindent-mode haskell-mode cider clojure-mode dokuwiki-mode dokuwiki elpy racer evil-smartparens tide processing-mode use-package evil-visual-mark-mode))
  '(session-use-package t nil (session))
  '(wakatime-api-key "b93ccd46-94c9-4b96-a195-4e0205b9cc36")
  '(wakatime-cli-path "/home/tommy/.local/bin/wakatime")
@@ -229,15 +231,10 @@
 (global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
 (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt)
 
+
 ;;(helm-posframe-enable)
-(add-hook 'reason-mode-hook (lambda ()
-							  (add-hook 'before-save-hook #'refmt-before-save)))
-
-(fset 'raise
-   "%%x``x")
-
 (defun window-half-height ()
-  (max 1 (/ (1- (window-height (selected-window))) 2))) 
+  (max 1 (/ (1- (window-height (selected-window))) 2)))
 
 (defun scroll-up-half ()
   (interactive)
@@ -251,10 +248,56 @@
 (with-eval-after-load 'evil-maps
   (define-key evil-normal-state-map (kbd "C-n") 'scroll-up-half)
   (define-key evil-normal-state-map (kbd "C-e") 'scroll-down-half)
-  ; overwrites top of window keybind
-  ; have this be 'window-next' and 'window prev'
+										; overwrites top of window keybind
+										; have this be 'window-next' and 'window prev'
   (define-key evil-normal-state-map (kbd "H") 'windmove-left) 
   (define-key evil-normal-state-map (kbd "I") 'windmove-right))
+
+; tree sitter bs
+(setq er/try-expand-list (append er/try-expand-list
+								 '(tree-sitter-mark-bigger-node)))
+
+; (load-file "~/.emacs.d/treenav.el")
+(setq auto-save-file-name-transforms
+	  `((".*" "~/.emacs-saves/" t)))
+
+(setq undo-tree-visualizer-diff nil)
+
+(save-place-mode t)
+
+; symex things 
+(add-to-list 'load-path "~/programming/clones/symex.el/")
+(require 'symex)
+(setq symex--user-evil-keyspec
+	  '((":" . evil-ex)
+		("l" . evil-undo)
+		
+		("h" . symex-go-down)
+		("n" . symex-go-forward)
+		("e" . symex-go-backward)
+		("i" . symex-go-up)
+
+		("C-e" . symex-leap-backward)
+		("C-n" . symex-leap-forward)
+		
+		("H" . paredit-raise-sexp)
+		("N" . symex-shift-forward)
+		("E" . symex-shift-backward)
+		("I" . symex-wrap)
+
+		("w" . symex-traverse-forward)
+		
+		
+		("C-h" . symex-climb-branch)
+		("C-I" . symex-descend-branch)
+		("M-j" . symex-goto-highest)
+		("M-k" . symex-goto-lowest)  ))
+
+
+(symex-initialize)
+(global-set-key (kbd "s-;") 'symex-mode-interface)
+
+(setq symex-modal-backend 'evil)
 
 (evil-define-key 'insert symex-mode-map
   (kbd "<escape>") 'symex-mode-interface)
@@ -262,41 +305,12 @@
 (evil-define-key 'normal symex-mode-map
   (kbd "<escape>") 'symex-mode-interface)
 
-; tree sitter bs
-(defun tree-sitter-mark-bigger-node ()
-  (interactive)
-  (let* ((p (point))
-		 (m (or (mark) p))
-		 (beg (min p m))
-		 (end (max p m))
-		 (root (ts-root-node tree-sitter-tree))
-		 (node (ts-get-descendant-for-position-range root beg end))
-		 (node-beg (ts-node-start-position node))
-		 (node-end (ts-node-end-position node)))
-	;; Node fits the region exactly. Try its parent node instead.
-	(when (and (= beg node-beg) (= end node-end))
-	  (when-let ((node (ts-get-parent node)))
-		(setq node-beg (ts-node-start-position node)
-			  node-end (ts-node-end-position node))))
-	(set-mark node-end)
-	(goto-char node-beg)))
-
-(setq er/try-expand-list (append er/try-expand-list
-                                 '(tree-sitter-mark-bigger-node)))
-
-; (load-file "~/.emacs.d/treenav.el")
-(setq auto-save-file-name-transforms
-	  `((".*" "~/.emacs-saves/" t)))
-
-(setq undo-tree-visualizer-diff nil)
-										; TODO make H and I switch left/right buffers
-(save-place-mode t)
-(use-package symex
-  :config
-  (symex-initialize)
-  (global-set-key (kbd "s-;") 'symex-mode-interface)
-  :custom
-  (symex-modal-backend 'evil))  
+;(use-package symex
+;  :config
+;  (symex-initialize)
+;  (global-set-key (kbd "s-;") 'symex-mode-interface)
+;  :custom
+;  (symex-modal-backend 'evil))  
 
 (use-package cider)
 (use-package session)
@@ -307,6 +321,7 @@
 
 (load "$HOME/.lisp.el")
 (put 'match 'lisp-indent-function 'defun)
+
 (setq line-number-mode t)
 (setq column-number-mode t)
 (setq visible-bell t)
