@@ -1,3 +1,7 @@
+; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
 (package-initialize)
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (column-number-mode 1)
@@ -286,12 +290,13 @@
 		("I" . symex-wrap)
 
 		("w" . symex-traverse-forward)
+		("W" . symex-wrap)
 		
 		
 		("C-h" . symex-climb-branch)
 		("C-I" . symex-descend-branch)
-		("M-j" . symex-goto-highest)
-		("M-k" . symex-goto-lowest)  ))
+		("M-i" . symex-goto-highest)
+		("M-h" . symex-goto-lowest)))
 
 
 (symex-initialize)
