@@ -200,7 +200,7 @@
  '(haskell-interactive-popup-errors nil)
  '(haskell-mode-hook '(interactive-haskell-mode) t)
  '(package-selected-packages
-   '(lua-mode fennel-mode session buffer-stack auto-yasnippet tree-sitter-langs tree-sitter helm-projectile leuven-theme nix-mode origami tuareg merlin reason-mode elm-mode tern ivy evil-lispy ivy-explorer ivy-dired-history kivy-mode ivy-clipmenu hy-mode moonscript evil-numbers latex-preview-pane auctex rainbow-delimiters markdown-mode evil-mc multiple-cursors eink-theme monokai-theme monokai-pro-theme string-edit vimish-fold hideshow-org gnu-elpa-keyring-update itail julia-repl julia-mode hindent hindent-mode haskell-mode cider clojure-mode dokuwiki-mode dokuwiki elpy racer evil-smartparens tide processing-mode use-package evil-visual-mark-mode))
+   '(clojure lua-mode fennel-mode session buffer-stack auto-yasnippet tree-sitter-langs tree-sitter helm-projectile leuven-theme nix-mode origami tuareg merlin reason-mode elm-mode tern ivy lispy evil-lispy ivy-explorer ivy-dired-history kivy-mode ivy-clipmenu hy-mode moonscript evil-numbers latex-preview-pane auctex rainbow-delimiters markdown-mode evil-mc multiple-cursors eink-theme monokai-theme monokai-pro-theme string-edit vimish-fold hideshow-org gnu-elpa-keyring-update itail julia-repl julia-mode hindent hindent-mode haskell-mode cider clojure-mode dokuwiki-mode dokuwiki elpy racer evil-smartparens tide processing-mode use-package evil-visual-mark-mode))
  '(session-use-package t nil (session))
  '(wakatime-api-key "b93ccd46-94c9-4b96-a195-4e0205b9cc36")
  '(wakatime-cli-path "/home/tommy/.local/bin/wakatime")
@@ -296,7 +296,8 @@
 		("C-h" . symex-climb-branch)
 		("C-I" . symex-descend-branch)
 		("M-i" . symex-goto-highest)
-		("M-h" . symex-goto-lowest)))
+		("M-h" . symex-goto-lowest)
+		("M-n" . symex-evaluate)))
 
 
 (symex-initialize)
@@ -324,7 +325,7 @@
 (setq auto-save-file-name-transforms
 	  `((".*" "~/.emacs-saves/" t)))
 
-(load "$HOME/.lisp.el")
+; (load "$HOME/.lisp.el")
 (put 'match 'lisp-indent-function 'defun)
 
 (setq line-number-mode t)
