@@ -1,7 +1,3 @@
-; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
 (package-initialize)
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (column-number-mode 1)
@@ -84,6 +80,8 @@
 (use-package tree-sitter)
 (use-package tree-sitter-langs)
 
+(add-to-list 'tree-sitter-load-path "/home/tommy/programming/brain/bin/")
+
 (global-tree-sitter-mode)
 (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
@@ -91,9 +89,9 @@
 (use-package expand-region)
 (use-package company)
 (use-package evil-colemak-basics :config (global-evil-colemak-basics-mode 1))
-(use-package elpy :ensure t :init (elpy-enable) :config (setq python-shell-interpreter "python3"
-															  elpy-rpc-python-command "python3"
-															  python-shell-interpreter-args "-i"))
+;;(use-package elpy :ensure t :init (elpy-enable) :config (setq python-shell-interpreter "python3"
+															  ;;elpy-rpc-python-command "python3"
+															  ;;python-shell-interpreter-args "-i"))
 (add-hook 'inferior-python-mode-hook
           (lambda ()
             (setq comint-move-point-for-output t)))
@@ -196,14 +194,15 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("039c01abb72985a21f4423dd480ddb998c57d665687786abd4e16c71128ef6ad" "ba7917b02812fee8da4827fdf7867d3f6f282694f679b5d73f9965f45590843a" default))
+   '("aba75724c5d4d0ec0de949694bce5ce6416c132bb031d4e7ac1c4f2dbdd3d580" "039c01abb72985a21f4423dd480ddb998c57d665687786abd4e16c71128ef6ad" "ba7917b02812fee8da4827fdf7867d3f6f282694f679b5d73f9965f45590843a" default))
  '(haskell-interactive-popup-errors nil)
  '(haskell-mode-hook '(interactive-haskell-mode) t)
  '(package-selected-packages
-   '(clojure lua-mode fennel-mode session buffer-stack auto-yasnippet tree-sitter-langs tree-sitter helm-projectile leuven-theme nix-mode origami tuareg merlin reason-mode elm-mode tern ivy lispy evil-lispy ivy-explorer ivy-dired-history kivy-mode ivy-clipmenu hy-mode moonscript evil-numbers latex-preview-pane auctex rainbow-delimiters markdown-mode evil-mc multiple-cursors eink-theme monokai-theme monokai-pro-theme string-edit vimish-fold hideshow-org gnu-elpa-keyring-update itail julia-repl julia-mode hindent hindent-mode haskell-mode cider clojure-mode dokuwiki-mode dokuwiki elpy racer evil-smartparens tide processing-mode use-package evil-visual-mark-mode))
+   '(htmlize clojure lua-mode fennel-mode session buffer-stack auto-yasnippet tree-sitter-langs tree-sitter helm-projectile leuven-theme nix-mode origami tuareg merlin reason-mode elm-mode tern ivy lispy evil-lispy ivy-explorer ivy-dired-history kivy-mode ivy-clipmenu hy-mode moonscript evil-numbers latex-preview-pane auctex rainbow-delimiters markdown-mode evil-mc multiple-cursors eink-theme monokai-theme monokai-pro-theme string-edit vimish-fold hideshow-org gnu-elpa-keyring-update itail julia-repl julia-mode hindent hindent-mode haskell-mode cider clojure-mode dokuwiki-mode dokuwiki elpy racer evil-smartparens tide processing-mode use-package evil-visual-mark-mode))
  '(session-use-package t nil (session))
+ '(undo-tree-auto-save-history nil)
  '(wakatime-api-key "b93ccd46-94c9-4b96-a195-4e0205b9cc36")
- '(wakatime-cli-path "/home/tommy/.local/bin/wakatime")
+ '(wakatime-cli-path "/home/tommy/go/bin/wakatime-cli")
  '(wakatime-python-bin nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -270,8 +269,15 @@
 (save-place-mode t)
 
 ; symex things 
-(add-to-list 'load-path "~/programming/clones/symex.el/")
+; (add-to-list 'load-path "~/programming/clones/symex.el/")
+(add-to-list 'load-path "~/programming/tdsl/symex.el/")
 (require 'symex)
+
+(defun cider-eval-and-replace ()
+  (interactive)
+  (goto-char (cadr (cider-sexp-at-point 'bounds)))
+  (cider-eval-last-sexp-and-replace))
+
 (setq symex--user-evil-keyspec
 	  '((":" . evil-ex)
 		("l" . evil-undo)
@@ -297,7 +303,9 @@
 		("C-I" . symex-descend-branch)
 		("M-i" . symex-goto-highest)
 		("M-h" . symex-goto-lowest)
-		("M-n" . symex-evaluate)))
+		("M-n" . symex-evaluate)
+		("M-d" . cider-doc)
+		("M-N" . cider-eval-and-replace)))
 
 
 (symex-initialize)
@@ -339,3 +347,15 @@
 (show-paren-mode 1)
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
+
+(load-file "~/programming/tdsl/tdsl.el")
+
+(org-babel-do-load-languages 'org-babel-load-languages
+    '(
+        (shell . t)
+		(python . t)
+    )
+)
+
+
+
